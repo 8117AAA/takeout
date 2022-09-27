@@ -1,6 +1,6 @@
 package edu.takeout.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import edu.takeout.common.MyUsernamePasswordToken;
 import edu.takeout.common.Result;
 import edu.takeout.common.ValidateCodeUtils;
 import edu.takeout.entity.User;
@@ -9,13 +9,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpSession;
 
 @Slf4j
 @RestController
@@ -38,14 +38,15 @@ public class UserController {
 
     @ApiOperation("用户登录")
     @PostMapping("/login")
-    Result<User> login(@RequestBody User user, HttpSession session){
-        User u = userService.getOne(new LambdaQueryWrapper<User>().eq(User::getPhone, user.getPhone()));
-        if (u == null){
-            u = new User();
-            u.setPhone(user.getPhone());
-            userService.save(u);
-        }
-        session.setAttribute("user",u.getId());
+    Result<User> login(@RequestBody User user){
+        Subject subject = SecurityUtils.getSubject();
+        MyUsernamePasswordToken token = new MyUsernamePasswordToken();
+        token.setIu(true);
+        token.setUsername(user.getPhone());
+        token.setPassword("".toCharArray());
+        subject.login(token);
+        User u = (User) subject.getPrincipal();
+        subject.getSession().setAttribute("user",u.getId());
         return Result.success(u);
     }
 }

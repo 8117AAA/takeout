@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,7 +27,7 @@ public class CommonController {
 
     @ApiOperation("文件上传")
     @PostMapping("/upload")
-    Result<String> upload(MultipartFile file, HttpServletRequest request) throws FileNotFoundException {
+    Result<String> upload(MultipartFile file) throws FileNotFoundException {
         String basepath = ResourceUtils.getURL("classpath:").getPath() + "uploaded";
         String originalFilename = file.getOriginalFilename();
         String suffix = originalFilename.substring(originalFilename.lastIndexOf("."));
@@ -47,7 +46,7 @@ public class CommonController {
 
     @ApiOperation("文件下载")
     @GetMapping("/download")
-    void download(String name, HttpServletResponse response, HttpServletRequest request) throws FileNotFoundException {
+    void download(String name, HttpServletResponse response) throws FileNotFoundException {
         final String basePath = ResourceUtils.getURL("classpath:").getPath() + "uploaded";
         try {
             FileInputStream inputStream = new FileInputStream(basePath + File.separator + name);

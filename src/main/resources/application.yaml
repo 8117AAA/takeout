@@ -1,16 +1,42 @@
 spring:
+  main:
+    allow-bean-definition-overriding: true
   redis:
-    host: 172.26.239.139
+    host: 172.26.239.115
     port: 6379
     database: 0
   cache:
     redis:
       time-to-live: 1800000
-  datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://172.26.239.139:3306/takeout_platform
-    username: root
-    password: root
+  shardingsphere:
+    datasource:
+      names: master, slave
+      master:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: org.mariadb.jdbc.Driver
+        jdbc-url: jdbc:mariadb://172.26.239.115:3306/takeout_platform
+        username: root
+        password: root
+      slave:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: org.mariadb.jdbc.Driver
+        jdbc-url: jdbc:mariadb://172.26.239.5:3306/takeout_platform
+        username: root
+        password: root
+    rules:
+      readwrite-splitting:
+        data-sources:
+          master:
+            static-strategy:
+              write-data-source-name: master
+              read-data-source-names: slave
+            load-balancer-name: round_robin
+        load-balancers:
+          round_robin:
+            type: ROUND_ROBIN
+    props:
+      sql:
+        show: true
 
 mybatis-plus:
   configuration:

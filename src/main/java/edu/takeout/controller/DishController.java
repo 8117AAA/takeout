@@ -95,17 +95,6 @@ public class DishController {
         return Result.success("change status successful");
     }
 
-//    @GetMapping("/list")
-//    Result<List<Dish>> dishList(Dish dish) {
-//        LambdaQueryWrapper<Dish> wrapper = new LambdaQueryWrapper<Dish>();
-//        wrapper.eq(dish.getCategoryId() != null, Dish::getCategoryId, dish.getCategoryId());
-//        wrapper.eq(Dish::getStatus,1);
-//        wrapper.orderByAsc(Dish::getSort);
-//        wrapper.orderByDesc(Dish::getUpdateTime);
-//        List<Dish> dishList = dishService.list(wrapper);
-//        return Result.success(dishList);
-//    }
-
     @ApiOperation("获取菜品列表")
     @GetMapping("/list")
     Result<List<DishDto>> dishList(Dish dish) {

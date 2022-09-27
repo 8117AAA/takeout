@@ -8,10 +8,11 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Slf4j
-@SpringBootApplication
 @ServletComponentScan
 @EnableTransactionManagement
 @EnableCaching
+//@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class,SpringBootConfiguration.class})
+@SpringBootApplication
 public class TakeoutApplication {
 
 	public static void main(String[] args) {
